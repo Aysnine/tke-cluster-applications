@@ -31,3 +31,56 @@ helm uninstall traefik # uninstall
 References: 
 
 - https://www.qikqiak.com/post/automatic-https-with-traefik2/
+
+### Routing usage: Expose your service by IngressRoute
+
+Expose web service `my-nginx-app:80` to `https://my-nginx-app.com` with auto cert and https-redirect.
+
+``` yaml
+# expose service to http://my-nginx-app.com
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: my-nginx-app
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`my-nginx-app.com`)
+      kind: Rule
+      # a service reference
+      services:
+        - name: my-nginx-app
+          port: 80
+      # redirect to https by custom middleware
+      middlewares:
+        - name: my-nginx-app-https-redirect-middleware
+---
+# custom middleware for redirect to https
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: my-nginx-app-https-redirect-middleware
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
+# expose service to https://my-nginx-app.com
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: my-nginx-app-tls
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`my-nginx-app.com`)
+      kind: Rule
+      # a service reference
+      services:
+        - name: my-nginx-app
+          port: 80
+  tls:
+    certResolver: default # Use default. Auto cert from Let's Encrypt
+```
