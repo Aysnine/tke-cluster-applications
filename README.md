@@ -1,6 +1,14 @@
 # tke-cluster-applications
 
-## traefik
+Need Helm 3+.
+
+## Traefik - 2.5
+
+presets:
+
+- Exposed host 80 and 443 ports.
+- Service use ClusterIP (Avoid expensive default LB).
+- Stable DaemonSet traefik pod.
 
 ```sh
 # helm repo add traefik https://helm.traefik.io/traefik
