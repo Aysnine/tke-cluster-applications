@@ -275,7 +275,7 @@ ports:
     protocol: TCP
   web:
     port: 8000
-    # hostPort: 8000
+    hostPort: 80
     expose: true
     exposedPort: 80
     # The port protocol (TCP/UDP)
@@ -289,7 +289,7 @@ ports:
     # redirectTo: websecure
   websecure:
     port: 8443
-    # hostPort: 8443
+    hostPort: 443
     expose: true
     exposedPort: 443
     # The port protocol (TCP/UDP)
