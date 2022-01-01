@@ -11,7 +11,7 @@ image:
 deployment:
   enabled: true
   # Can be either Deployment or DaemonSet
-  kind: Deployment
+  kind: DaemonSet
   # Number of pods of the deployment (only applies when kind == Deployment)
   replicas: 1
   # Amount of time (in seconds) before Kubernetes will send the SIGKILL signal if Traefik does not shut down
