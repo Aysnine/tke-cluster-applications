@@ -11,7 +11,7 @@ image:
 deployment:
   enabled: true
   # Can be either Deployment or DaemonSet
-  kind: DaemonSet
+  kind: Deployment
   # Number of pods of the deployment (only applies when kind == Deployment)
   replicas: 1
   # Amount of time (in seconds) before Kubernetes will send the SIGKILL signal if Traefik does not shut down
@@ -41,15 +41,15 @@ deployment:
     #   hostPath:
     #     path: /var/run/statsd-exporter
   # Additional initContainers (e.g. for setting file permission as shown below)
-  initContainers: []
+  initContainers:
     # The "volume-permissions" init container is required if you run into permission issues.
     # Related issue: https://github.com/traefik/traefik/issues/6972
-    # - name: volume-permissions
-    #   image: busybox:1.31.1
-    #   command: ["sh", "-c", "chmod -Rv 600 /data/*"]
-    #   volumeMounts:
-    #     - name: data
-    #       mountPath: /data
+    - name: volume-permissions
+      image: busybox:1.31.1
+      command: ["sh", "-c", "chmod -Rv 600 /data/*"]
+      volumeMounts:
+        - name: data
+          mountPath: /data
   # Custom pod DNS policy. Apply if `hostNetwork: true`
   # dnsPolicy: ClusterFirstWithHostNet
   # Additional imagePullSecrets
@@ -218,7 +218,17 @@ globalArguments:
 # Additional arguments to be passed at Traefik's binary
 # All available options available on https://docs.traefik.io/reference/static-configuration/cli/
 ## Use curly braces to pass values: `helm install --set="additionalArguments={--providers.kubernetesingress.ingressclass=traefik-internal,--log.level=DEBUG}"`
-additionalArguments: []
+additionalArguments:
+  - "--certificatesResolvers.default.acme.tlsChallenge=true"
+  - "--certificatesResolvers.default.acme.email=cnine229@gmail.com"
+
+  # ! only test
+  - "--certificatesResolvers.default.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+
+  # ! use this in production
+  # - "--certificatesResolvers.default.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
+
+  - "--certificatesResolvers.default.acme.storage=/data/acme.json"
 #  - "--providers.kubernetesingress.ingressclass=traefik-internal"
 #  - "--log.level=DEBUG"
 
@@ -385,12 +395,12 @@ autoscaling:
 # - "--certificatesresolvers.le.acme.storage=/data/acme.json"
 # It will persist TLS certificates.
 persistence:
-  enabled: false
+  enabled: true
   name: data
 #  existingClaim: ""
   accessMode: ReadWriteOnce
   size: 128Mi
-  # storageClass: ""
+#  storageClass: ""
   path: /data
   annotations: {}
   # subPath: "" # only mount a subpath of the Volume into the pod
@@ -454,10 +464,10 @@ priorityClassName: ""
 securityContext:
   capabilities:
     drop: [ALL]
-  readOnlyRootFilesystem: true
-  runAsGroup: 65532
-  runAsNonRoot: true
-  runAsUser: 65532
+  readOnlyRootFilesystem: false
+  runAsGroup: 0
+  runAsNonRoot: false
+  runAsUser: 0
 
 podSecurityContext:
   fsGroup: 65532
