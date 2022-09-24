@@ -223,10 +223,10 @@ additionalArguments:
   - "--certificatesResolvers.default.acme.email=cnine229@gmail.com"
 
   # ! only test
-  - "--certificatesResolvers.default.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+  # - "--certificatesResolvers.default.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
 
   # ! use this in production
-  # - "--certificatesResolvers.default.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
+  - "--certificatesResolvers.default.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
 
   - "--certificatesResolvers.default.acme.storage=/data/acme.json"
 #  - "--providers.kubernetesingress.ingressclass=traefik-internal"
